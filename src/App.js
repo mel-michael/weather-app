@@ -9,17 +9,18 @@ const API_KEY = 'ec740e5d84f0be721f85e781dc731cc7';
 
 function WeatheComponent (props) {
   console.log(props);
-  const { coord, name, sys, id, main} = props.weatherData;
-  // console.log(object);
-  return (<ul>
-    <li>{name} | {sys.country} </li>
-    <li>{id} </li>
-    <li>{coord.lat} </li>
-    <li>{coord.lon} </li>
-    <li>{main.humidity} </li>
-    <li>{main.pressure} </li>
-    <button onClick={props.del}>Delete</button> <br /> <br />
-  </ul>)
+  const { coord, name, sys, main} = props.weatherData;
+  return (
+    <ul>
+      <li>City: {name}</li>
+      <li>Country: {sys.country}</li>
+      <li>Latitude: {coord.lat}</li>
+      <li>Longitude: {coord.lon}</li>
+      <li>Humidity: {main.humidity}</li>
+      <li>Pressure: {main.pressure}</li>
+      <button onClick={props.onDelete}>Delete</button> <br /> <br /><hr />
+    </ul>
+  );
 }
 
 
@@ -28,8 +29,7 @@ class App extends Component {
     super(props);
     this.state = {
       cityName: '',
-      weatherData: null,
-      searchList: []
+      cityList: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.findCity = this.findCity.bind(this);
@@ -45,15 +45,14 @@ class App extends Component {
     axios.get(`${WEATHER_API}${this.state.cityName}&APPID=${API_KEY}`)
       .then((result) => {
         console.log(result);
-        this.setState({ searchList: [...this.state.searchList, result.data] })
+        this.setState({ cityList: [...this.state.cityList, result.data] })
       })
       .catch(err => console.error(err))
   }
 
   deleteCity(id) {
     console.log(id);
-    const result = this.state.searchList.filter(list => list.id !== id)
-    this.setState({ searchList: result })
+    this.setState({ cityList: this.state.cityList.filter(list => list.id !== id) })
   }
 
   render() {
@@ -70,10 +69,16 @@ class App extends Component {
         <button onClick={this.findCity}>Search</button> <br /> <br />
 
         {
-          this.state.searchList.length > 0 ?
-            this.state.searchList.map(item => <WeatheComponent weatherData={item} del={this.deleteCity.bind(this, item.id)} key={item.id} /> )
-          : 'No search Found'
+          this.state.cityList.length > 0 ?
+            this.state.cityList.map(item =>
+              <WeatheComponent weatherData={item}
+                onDelete={this.deleteCity.bind(this, item.id)}
+                key={item.id}
+              />
+            )
+            : null
         }
+
       </div>
     );
   }
