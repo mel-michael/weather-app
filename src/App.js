@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import logo from './logo.svg';
 import './App.css';
-import WeatherComponent from './components/WeatherComponent';
+import WeatherComponent from './components/Weather';
 require('dotenv').config();
 
 const WEATHER_API = 'https://api.openweathermap.org/data/2.5/weather?q=';
@@ -17,7 +17,7 @@ class App extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.findCity = this.findCity.bind(this);
-    // this.deleteCity = this.deleteCity.bind(this);
+    this.deleteCity = this.deleteCity.bind(this);
   }
 
   handleChange(e) {
@@ -27,7 +27,6 @@ class App extends Component {
   findCity() {
     axios.get(`${WEATHER_API}${this.state.cityName}&APPID=${API_KEY}`)
       .then((result) => {
-        console.log(result);
         this.setState({ cityList: [...this.state.cityList, result.data] })
       })
       .catch(err => console.error(err))
@@ -47,14 +46,14 @@ class App extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-        <input type="text" onChange={this.handleChange} /> <br /> <br/>
+        <input type="text" onChange={this.handleChange} /> <br /> <br />
         <button onClick={this.findCity}>Search</button> <br /> <br />
 
         {
           this.state.cityList.length > 0 ?
             this.state.cityList.map(item =>
               <WeatherComponent weatherData={item}
-                onDelete={this.deleteCity.bind(this, item.id)}
+                onDelete={this.deleteCity}
                 key={item.id}
               />
             )
