@@ -2,27 +2,11 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import logo from './logo.svg';
 import './App.css';
-// import 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css';
+import WeatherComponent from './components/WeatherComponent';
+require('dotenv').config();
 
 const WEATHER_API = 'https://api.openweathermap.org/data/2.5/weather?q=';
-const API_KEY = 'ec740e5d84f0be721f85e781dc731cc7';
-
-function WeatheComponent (props) {
-  console.log(props);
-  const { coord, name, sys, main} = props.weatherData;
-  return (
-    <ul>
-      <li>City: {name}</li>
-      <li>Country: {sys.country}</li>
-      <li>Latitude: {coord.lat}</li>
-      <li>Longitude: {coord.lon}</li>
-      <li>Humidity: {main.humidity}</li>
-      <li>Pressure: {main.pressure}</li>
-      <button onClick={props.onDelete}>Delete</button> <br /> <br /><hr />
-    </ul>
-  );
-}
-
+const { REACT_APP_API_KEY: API_KEY } = process.env;
 
 class App extends Component {
   constructor(props) {
@@ -37,7 +21,6 @@ class App extends Component {
   }
 
   handleChange(e) {
-    console.log(e.target.value);
     this.setState({ cityName: e.target.value });
   }
 
@@ -51,7 +34,6 @@ class App extends Component {
   }
 
   deleteCity(id) {
-    console.log(id);
     this.setState({ cityList: this.state.cityList.filter(list => list.id !== id) })
   }
 
@@ -71,7 +53,7 @@ class App extends Component {
         {
           this.state.cityList.length > 0 ?
             this.state.cityList.map(item =>
-              <WeatheComponent weatherData={item}
+              <WeatherComponent weatherData={item}
                 onDelete={this.deleteCity.bind(this, item.id)}
                 key={item.id}
               />
